@@ -1,0 +1,30 @@
+
+**************Begin new trust node proc****************************
+{ "HEAD":{"tag":"MESG","version":65537,"sender_uuid":"vtcm_input","receiver_uuid":"vtcm_utils","route":"vtcm_utils","flow":"DELIVER","state":"INIT","flag":"LOCAL","ljump":1,"rjump":1,"record_type":"VTCM_UTILS","record_subtype":"TCM_UTILS_INPUT","record_num":1,"record_size":0,"expand_num":0,"expand_size":0,"msg_uuid":"6a61304f89e006367a9449e4bcb292b5d36f9f86fc3eb35c5f7c9c1317476cc9"},"RECORD":[{"param_num":5,"params":["apcreate","-it","04","-pwd","sss"]}],"EXPAND" :[]}
+
+************************************************************
+{ "HEAD":{"tag":"MESG","version":65537,"sender_uuid":"vtcm_utils","receiver_uuid":"vtcm_input","route":"vtcm_utils","flow":"DELIVER","state":"INIT","flag":"LOCAL","ljump":2,"rjump":1,"record_type":"VTCM_UTILS","record_subtype":"TCM_UTILS_OUTPUT","record_num":1,"record_size":0,"expand_num":0,"expand_size":0,"msg_uuid":"6a61304f89e006367a9449e4bcb292b5d36f9f86fc3eb35c5f7c9c1317476cc9"},"RECORD":[{"param_num":2,"params":["0","7780b1dd
+"]}],"EXPAND" :[]}
+
+************************************************************
+{ "HEAD":{"tag":"MESG","version":65537,"sender_uuid":"vtcm_input","receiver_uuid":"vtcm_utils","route":"vtcm_utils","flow":"DELIVER","state":"INIT","flag":"LOCAL","ljump":1,"rjump":1,"record_type":"VTCM_UTILS","record_subtype":"TCM_UTILS_INPUT","record_num":1,"record_size":0,"expand_num":0,"expand_size":0,"msg_uuid":"5ee32a100b5a26698a3df2d274ce476576a3695e080b80555703c26220fc1657"},"RECORD":[{"param_num":5,"params":["loadkey","-ih","7780b1dd","-kf","sm4.key"]}],"EXPAND" :[]}
+
+************************************************************
+{ "HEAD":{"tag":"MESG","version":65537,"sender_uuid":"vtcm_utils","receiver_uuid":"vtcm_input","route":"vtcm_utils","flow":"DELIVER","state":"INIT","flag":"LOCAL","ljump":2,"rjump":1,"record_type":"VTCM_UTILS","record_subtype":"TCM_UTILS_OUTPUT","record_num":1,"record_size":0,"expand_num":0,"expand_size":0,"msg_uuid":"5ee32a100b5a26698a3df2d274ce476576a3695e080b80555703c26220fc1657"},"RECORD":[{"param_num":2,"params":["0","7cbdad6d
+"]}],"EXPAND" :[]}
+
+************************************************************
+{ "HEAD":{"tag":"MESG","version":65537,"sender_uuid":"vtcm_input","receiver_uuid":"vtcm_utils","route":"vtcm_utils","flow":"DELIVER","state":"INIT","flag":"LOCAL","ljump":1,"rjump":1,"record_type":"VTCM_UTILS","record_subtype":"TCM_UTILS_INPUT","record_num":1,"record_size":0,"expand_num":0,"expand_size":0,"msg_uuid":"50a096420f70ff02269ff289edb88f8cacf3f89b786aa4a69463429ee34e8e98"},"RECORD":[{"param_num":7,"params":["apcreate","-it","01","-iv","7cbdad6d","-pwd","sm4"]}],"EXPAND" :[]}
+
+************************************************************
+{ "HEAD":{"tag":"MESG","version":65537,"sender_uuid":"vtcm_utils","receiver_uuid":"vtcm_input","route":"vtcm_utils","flow":"DELIVER","state":"INIT","flag":"LOCAL","ljump":2,"rjump":1,"record_type":"VTCM_UTILS","record_subtype":"TCM_UTILS_OUTPUT","record_num":1,"record_size":0,"expand_num":0,"expand_size":0,"msg_uuid":"50a096420f70ff02269ff289edb88f8cacf3f89b786aa4a69463429ee34e8e98"},"RECORD":[{"param_num":2,"params":["0","8938d7c
+"]}],"EXPAND" :[]}
+
+************************************************************
+{ "HEAD":{"tag":"MESG","version":65537,"sender_uuid":"vtcm_input","receiver_uuid":"vtcm_utils","route":"vtcm_utils","flow":"DELIVER","state":"INIT","flag":"LOCAL","ljump":1,"rjump":1,"record_type":"VTCM_UTILS","record_subtype":"TCM_UTILS_INPUT","record_num":1,"record_size":0,"expand_num":0,"expand_size":0,"msg_uuid":"d98effe13719ad5b0e8e7398332bec0426d8b93daab515b80b408be5e07de09d"},"RECORD":[{"param_num":9,"params":["seal","-ikh","7cbdad6d","-idh","8938d7c","-rf","plain.dat","-wf","seal.dat"]}],"EXPAND" :[]}
+
+************************************************************
+{ "HEAD":{"tag":"MESG","version":65537,"sender_uuid":"vtcm_utils","receiver_uuid":"vtcm_input","route":"vtcm_utils","flow":"DELIVER","state":"INIT","flag":"LOCAL","ljump":2,"rjump":1,"record_type":"VTCM_UTILS","record_subtype":"TCM_UTILS_OUTPUT","record_num":1,"record_size":0,"expand_num":0,"expand_size":0,"msg_uuid":"d98effe13719ad5b0e8e7398332bec0426d8b93daab515b80b408be5e07de09d"},"RECORD":[{"param_num":2,"params":["0","
+"]}],"EXPAND" :[]}
+
+************************************************************

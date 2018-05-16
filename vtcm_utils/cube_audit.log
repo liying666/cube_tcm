@@ -1,0 +1,48 @@
+read 2 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/namelist.json!
+read 4 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/dispatchnamelist.json!
+read 1 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/typelist.json!
+read 7 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/subtypelist.json!
+read 1 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/baseflag.json!
+read 3 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/memdb.json!
+read 6 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/msghead.json!
+read 2 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/msgrecord.json!
+read 3 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/expandrecord.json!
+read 6 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/base_msg.json!
+read 3 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/dispatchrecord.json!
+read 2 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/exmoduledefine.json!
+read 1 elem from file /home/liying/trust/cube-1.3/proc/main/base_define/sys_conn.json!
+read 3 elem from file ../define/tcm_value.json!
+read 48 elem from file ../define/tcm_general_define.json!
+read 102 elem from file ../define/tcm_input_define.json!
+this machine's local uuid is 7d3f16c616ff3109a97d5e6291081dea8f64d62b5e44116fa4cb8dd298242b78
+read 1 connector!
+read 1 policy succeed!
+prepare the router proc
+prepare the conn proc
+monitor ex_modulec router_proc started successfully!
+start ex_module vtcm_utils started successfully!
+start ex_module vtcm_input started successfully!
+router get proc vtcm_input's message!
+message (VTCM_UTILS TCM_UTILS_INPUT) is send to vtcm_utils!
+write 80 data!
+read 82 data!
+router get proc vtcm_utils's message!
+message (VTCM_UTILS TCM_UTILS_OUTPUT) is send to vtcm_input!
+router get proc vtcm_input's message!
+message (VTCM_UTILS TCM_UTILS_INPUT) is send to vtcm_utils!
+write 212 data!
+read 46 data!
+router get proc vtcm_utils's message!
+message (VTCM_UTILS TCM_UTILS_OUTPUT) is send to vtcm_input!
+router get proc vtcm_input's message!
+message (VTCM_UTILS TCM_UTILS_INPUT) is send to vtcm_utils!
+write 80 data!
+read 82 data!
+router get proc vtcm_utils's message!
+message (VTCM_UTILS TCM_UTILS_OUTPUT) is send to vtcm_input!
+router get proc vtcm_input's message!
+message (VTCM_UTILS TCM_UTILS_INPUT) is send to vtcm_utils!
+write 122 data!
+read 187 data!
+router get proc vtcm_utils's message!
+message (VTCM_UTILS TCM_UTILS_OUTPUT) is send to vtcm_input!
