@@ -3349,13 +3349,13 @@ int proc_vtcm_Seal(void *sub_proc, void *recv_msg)
     vtcm_SealedData_Init(&s2SealedData);
     vtcm_PCRInfo_Init(&tcm_pcr_info);
     //input process
-    struct tcm_in_Seal *vtcm_input;
+    struct tcm_in_Seal *vtcm_in;
     
-    ret = message_get_record(recv_msg, (void **)&vtcm_input, 0); // get structure 
+    ret = message_get_record(recv_msg, (void **)&vtcm_in, 0); // get structure 
     if(ret < 0) 
         return ret;
     else ret = 0;
-    if(vtcm_input == NULL)
+    if(vtcm_in == NULL)
         return -EINVAL;
     
     tcm_state_t* tcm_state = ex_module_getpointer(sub_proc);
@@ -3365,8 +3365,8 @@ int proc_vtcm_Seal(void *sub_proc, void *recv_msg)
     {    
         printf("can't solve this command!\n");
     }    
-    struct tcm_out_Seal * vtcm_output = malloc(struct_size(template_out));
-    s1StoredData = &(vtcm_output->sealedData);
+    struct tcm_out_Seal * vtcm_out = malloc(struct_size(template_out));
+    s1StoredData = &(vtcm_out->sealedData);
     vtcm_StoredData_Init(s1StoredData);
     //Processing
     //Get AuthSession
@@ -3374,16 +3374,16 @@ int proc_vtcm_Seal(void *sub_proc, void *recv_msg)
     {
        ret = vtcm_AuthSessions_GetEntry(&authSession,
                                         tcm_state->tcm_stany_data.sessions,
-                                        vtcm_input->authHandle);
+                                        vtcm_in->authHandle);
     }
     //Verification authCode
     
     if(ret == TCM_SUCCESS)
     {
-      ret = vtcm_Compute_AuthCode(vtcm_input, DTYPE_VTCM_IN,SUBTYPE_SEAL_IN, authSession, CheckData);
+      ret = vtcm_Compute_AuthCode(vtcm_in, DTYPE_VTCM_IN,SUBTYPE_SEAL_IN, authSession, CheckData);
       if(ret == TCM_SUCCESS)
       {
-        if(Memcmp(CheckData,vtcm_input->authCode,TCM_HASH_SIZE) != 0)
+        if(Memcmp(CheckData,vtcm_in->authCode,TCM_HASH_SIZE) != 0)
         {    
             ret = TCM_AUTHFAIL;
             printf("\nCompare AuthCode1 Error\n\n");
@@ -3397,7 +3397,7 @@ int proc_vtcm_Seal(void *sub_proc, void *recv_msg)
         ret = vtcm_KeyHandleEntries_GetKey(&key, 
                                            &parentPCRStatus, 
                                            tcm_state, 
-                                           vtcm_input->keyHandle,
+                                           vtcm_in->keyHandle,
                                            FALSE,     // not r/o, using to encrypt
                                            FALSE,     // do not ignore PCRs
                                            FALSE);    // cannot use EK
@@ -3407,7 +3407,7 @@ int proc_vtcm_Seal(void *sub_proc, void *recv_msg)
     {
         ret = vtcm_AuthSessionData_Decrypt(Sealed_AuthData,
                                            authSession,
-                                           vtcm_input->encAuth);
+                                           vtcm_in->encAuth);
     }
     //Get authData
     if(ret == TCM_SUCCESS)
@@ -3429,9 +3429,9 @@ int proc_vtcm_Seal(void *sub_proc, void *recv_msg)
         Memcpy(s2SealedData.authData, Sealed_AuthData, TCM_NONCE_SIZE);
         Memcpy(s2SealedData.tcmProof, tcm_state->tcm_permanent_data.tcmProof, TCM_NONCE_SIZE);
         ret = vtcm_StoredData_GenerateDigest(s2SealedData.storedDigest.digest, s1StoredData);
-        s2SealedData.dataSize = vtcm_input->InDataSize;
+        s2SealedData.dataSize = vtcm_in->InDataSize;
         s2SealedData.data = (BYTE *)malloc(sizeof(BYTE) * s2SealedData.dataSize);
-        Memcpy(s2SealedData.data, vtcm_input->InData, s2SealedData.dataSize);
+        Memcpy(s2SealedData.data, vtcm_in->InData, s2SealedData.dataSize);
     }
     //Filling TCM_STORED_DATA
     if(ret == TCM_SUCCESS)
@@ -3442,20 +3442,20 @@ int proc_vtcm_Seal(void *sub_proc, void *recv_msg)
     //Response
     printf("proc_vtcm_Seal : Response \n");
 
-    vtcm_output->tag = 0xC500;
-    vtcm_output->returnCode = ret;
+    vtcm_out->tag = 0xC500;
+    vtcm_out->returnCode = ret;
     
     BYTE* response = (BYTE*)malloc(sizeof(BYTE) * 700);
-    int responseSize = struct_2_blob(vtcm_output, response, template_out);
-    vtcm_output->paramSize = responseSize;
+    int responseSize = struct_2_blob(vtcm_out, response, template_out);
+    vtcm_out->paramSize = responseSize;
     
     if(ret == TCM_SUCCESS)
     {    
-        ret = vtcm_Compute_AuthCode(vtcm_output, 
+        ret = vtcm_Compute_AuthCode(vtcm_out, 
                                     DTYPE_VTCM_OUT,
                                     SUBTYPE_SEAL_OUT, 
                                     authSession, 
-                                    vtcm_output->authCode);
+                                    vtcm_out->authCode);
     }
     void *send_msg = message_create(DTYPE_VTCM_OUT ,SUBTYPE_SEAL_OUT ,recv_msg);
     if(send_msg == NULL)
@@ -3463,7 +3463,7 @@ int proc_vtcm_Seal(void *sub_proc, void *recv_msg)
         printf("send_msg == NULL\n");
         return -EINVAL;      
     }
-    message_add_record(send_msg, vtcm_output);
+    message_add_record(send_msg, vtcm_out);
 
      // add vtcm's expand info	
     ret=vtcm_addcmdexpand(send_msg,recv_msg);
@@ -3543,7 +3543,7 @@ int vtcm_Data_Decrypt(TCM_SEALED_DATA *a1decrypt,
                 printf("Error, KDFwithSm3\n");
             }
             sm4_setkey_dec(&ctx, SymKey);
-            sm4_crypt_ecb(&ctx, 0, 32, encData, Str_sealed);
+            sm4_crypt_ecb(&ctx, 0, encDataSize, encData, Str_sealed);
         }
         if(ret == TCM_SUCCESS)
         {
@@ -3578,13 +3578,13 @@ int proc_vtcm_UnSeal(void *sub_proc, void *recv_msg)
 
     vtcm_SealedData_Init(&a1decrypt);
     //input process
-    struct tcm_in_UnSeal *vtcm_input;
+    struct tcm_in_UnSeal *vtcm_in;
     
-    ret = message_get_record(recv_msg, (void **)&vtcm_input, 0); // get structure 
+    ret = message_get_record(recv_msg, (void **)&vtcm_in, 0); // get structure 
     if(ret < 0) 
         return ret;
     else ret = 0;
-    if(vtcm_input == NULL)
+    if(vtcm_in == NULL)
         return -EINVAL;
     
     tcm_state_t* tcm_state = ex_module_getpointer(sub_proc);
@@ -3594,7 +3594,7 @@ int proc_vtcm_UnSeal(void *sub_proc, void *recv_msg)
     {    
         printf("can't solve this command!\n");
     }    
-    struct tcm_out_UnSeal * vtcm_output = malloc(struct_size(template_out));
+    struct tcm_out_UnSeal * vtcm_out = malloc(struct_size(template_out));
 
     //Processing
     //Get AuthSession
@@ -3602,13 +3602,13 @@ int proc_vtcm_UnSeal(void *sub_proc, void *recv_msg)
     {
        ret = vtcm_AuthSessions_GetEntry(&authSession,
                                         tcm_state->tcm_stany_data.sessions,
-                                        vtcm_input->UnAuthHandle);
+                                        vtcm_in->UnAuthHandle);
     }
     //Verification authCode
     
     if(ret == TCM_SUCCESS)
     {
-      ret = vtcm_Compute_AuthCode(vtcm_input, 
+      ret = vtcm_Compute_AuthCode(vtcm_in, 
                                   DTYPE_VTCM_IN,
                                   SUBTYPE_UNSEAL_IN, 
                                   authSession, 
@@ -3616,7 +3616,7 @@ int proc_vtcm_UnSeal(void *sub_proc, void *recv_msg)
     }
       if(ret == TCM_SUCCESS)
       {
-        if(Memcmp(CheckData,vtcm_input->UnAuthCode,TCM_HASH_SIZE) != 0)
+        if(Memcmp(CheckData,vtcm_in->UnAuthCode,TCM_HASH_SIZE) != 0)
         {    
             ret = TCM_AUTHFAIL;
             printf("\nCompare AuthCode Error\n\n");
@@ -3624,7 +3624,7 @@ int proc_vtcm_UnSeal(void *sub_proc, void *recv_msg)
       }
     if(ret == TCM_SUCCESS)
     {
-      ret = vtcm_Compute_AuthCode(vtcm_input, 
+      ret = vtcm_Compute_AuthCode(vtcm_in, 
                                   DTYPE_VTCM_IN,
                                   SUBTYPE_UNSEAL_IN, 
                                   authSession, 
@@ -3632,7 +3632,7 @@ int proc_vtcm_UnSeal(void *sub_proc, void *recv_msg)
     }
       if(ret == TCM_SUCCESS)
       {
-        if(Memcmp(CheckData_2,vtcm_input->authCode,TCM_HASH_SIZE) != 0)
+        if(Memcmp(CheckData_2,vtcm_in->authCode,TCM_HASH_SIZE) != 0)
         {    
             ret = TCM_AUTHFAIL;
             printf("\nCompare AuthCode Error\n\n");
@@ -3645,7 +3645,7 @@ int proc_vtcm_UnSeal(void *sub_proc, void *recv_msg)
         ret = vtcm_KeyHandleEntries_GetKey(&tcm_key, 
                                            &parentPCRStatus, 
                                            tcm_state, 
-                                           vtcm_input->keyHandle,
+                                           vtcm_in->keyHandle,
                                            FALSE,     // not r/o, using to encrypt
                                            FALSE,     // do not ignore PCRs
                                            FALSE);    // cannot use EK
@@ -3654,42 +3654,42 @@ int proc_vtcm_UnSeal(void *sub_proc, void *recv_msg)
     if(ret == TCM_SUCCESS)
     {
         ret = vtcm_Data_Decrypt(&a1decrypt,
-                                vtcm_input->encAuth.encData,
-                                vtcm_input->encAuth.encDataSize,
+                                vtcm_in->encAuth.encData,
+                                vtcm_in->encAuth.encDataSize,
                                 tcm_key);
     }
     //Add PrintData
     if(ret == TCM_SUCCESS)
     {
-        vtcm_output->PrintDataSize = a1decrypt.dataSize;
-        vtcm_output->PrintData = (BYTE *)malloc(sizeof(BYTE) * a1decrypt.dataSize);
-        Memcpy(vtcm_output->PrintData, a1decrypt.data, vtcm_output->PrintDataSize);
+        vtcm_out->PrintDataSize = a1decrypt.dataSize;
+        vtcm_out->PrintData = (BYTE *)malloc(sizeof(BYTE) * a1decrypt.dataSize);
+        Memcpy(vtcm_out->PrintData, a1decrypt.data, vtcm_out->PrintDataSize);
     }
     
     //Response
     printf("proc_vtcm_UnSeal : Response \n");
 
-    vtcm_output->tag = 0xC500;
-    vtcm_output->returnCode = ret;
+    vtcm_out->tag = 0xC500;
+    vtcm_out->returnCode = ret;
     BYTE* response = (BYTE*)malloc(sizeof(BYTE) * 700);
-    int responseSize = struct_2_blob(vtcm_output, response, template_out);
-    vtcm_output->paramSize = responseSize;
+    int responseSize = struct_2_blob(vtcm_out, response, template_out);
+    vtcm_out->paramSize = responseSize;
     
     if(ret == TCM_SUCCESS)
     {
-      ret = vtcm_Compute_AuthCode(vtcm_output, 
+      ret = vtcm_Compute_AuthCode(vtcm_out, 
                                   DTYPE_VTCM_OUT,
                                   SUBTYPE_UNSEAL_OUT, 
                                   authSession, 
-                                  vtcm_output->UnauthCode);
+                                  vtcm_out->UnauthCode);
     }
     if(ret == TCM_SUCCESS)
     {
-      ret = vtcm_Compute_AuthCode(vtcm_output, 
+      ret = vtcm_Compute_AuthCode(vtcm_out, 
                                   DTYPE_VTCM_OUT,
                                   SUBTYPE_UNSEAL_OUT, 
                                   authSession, 
-                                  vtcm_output->authCode);
+                                  vtcm_out->authCode);
     }
     void *send_msg = message_create(DTYPE_VTCM_OUT ,SUBTYPE_UNSEAL_OUT ,recv_msg);
     if(send_msg == NULL)
@@ -3697,7 +3697,7 @@ int proc_vtcm_UnSeal(void *sub_proc, void *recv_msg)
         printf("send_msg == NULL\n");
         return -EINVAL;      
     }
-    message_add_record(send_msg, vtcm_output);
+    message_add_record(send_msg, vtcm_out);
      // add vtcm's expand info	
     ret=vtcm_addcmdexpand(send_msg,recv_msg);
     if(ret < 0)
